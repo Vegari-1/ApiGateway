@@ -1,0 +1,12 @@
+﻿{
+  "Routes": [
+
+  ],
+  "GlobalConfiguration": {
+    "ReguestIdKey": "OcRequestId",
+    "DownstreamScheme": "https",
+    "LoadBalancerOptions": {
+      "Type":  "LeastConnection"
+    }
+   }
+ }
