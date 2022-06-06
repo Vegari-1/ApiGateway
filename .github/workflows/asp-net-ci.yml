@@ -1,0 +1,63 @@
+name: ASP.NET-CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+env:
+  PROJ_DIR: ./ApiGateway
+  PACKAGE_DIR: ${{ format('{0}/{0}', 'ApiGateway') }}
+  PACKAGE_PATH: ${{ format('{0}/{0}/bin/Release/*.nupkg', 'ApiGateway') }}
+
+
+jobs:
+  ci-pipe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages # lokacija kesa za nuget u okviru linux masine (dokumentaciji actions/cache@v3)
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/package-lock.json')}} # kljuc pod kojim je kes sacuvan (kreira se novi za svaku promenu dependensija)
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Install Dependencies
+        working-directory: ${{ env.PROJ_DIR }}
+        run: dotnet restore
+      - name: Build App
+        working-directory: ${{ env.PROJ_DIR }}
+        run: dotnet build --configuration Release --no-restore # bilduje aplikaciju za po Release konfiguraciji i bez pozivanja dotnet restore pre bilda
+      - name: Run Tests
+        working-directory: ${{ env.PROJ_DIR }}
+        run: dotnet test --no-restore --verbosity normal
+      
+      - name: Determine next version
+        id: version
+        if: github.event_name == 'push'
+        run: |
+          echo "::set-output name=VERSION::$(npx semantic-release --dry-run | grep -oP 'Published release \K.*? ')"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create a Release
+        if: github.event_name == 'push'
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Package
+        if: github.event_name == 'push'
+        working-directory: ${{ env.PACKAGE_DIR }}
+        run: dotnet pack --configuration Release --no-build /p:Version=${{ steps.version.outputs.VERSION }}
+      - name: Publish the package to GPR
+        if: github.event_name == 'push'
+        run: |
+          dotnet nuget add source --username ekipa --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Vegari-1/index.json"
+          dotnet nuget push ${{ env.PACKAGE_PATH }} --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
