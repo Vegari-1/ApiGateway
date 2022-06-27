@@ -53,7 +53,7 @@ jobs:
       - name: Create Package
         if: github.event_name == 'push'
         working-directory: ${{ env.PACKAGE_DIR }}
-        run: dotnet pack --configuration Release --no-build /p:Version=${{ steps.version.outputs.VERSION }}
+        run: dotnet pack --configuration Release --no-build /p:Version=${{ steps.version.outputs.new-release-version }}
       
       - name: Publish the package to GPR
         if: github.event_name == 'push'
