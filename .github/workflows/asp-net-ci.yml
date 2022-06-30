@@ -10,7 +10,7 @@ env:
   PROJ_DIR: ./ApiGateway
   PACKAGE_DIR: ${{ format('{0}/{0}', 'ApiGateway') }}
   PACKAGE_PATH: ${{ format('{0}/{0}/bin/Release/*.nupkg', 'ApiGateway') }}
-  DOCKERHUB_REPO: evaj10/api-gateway
+  DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway
 
 
 jobs:
@@ -19,10 +19,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Setup dotnet
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '6.0.x'
+
+      - name: Lint commit messages
+        uses: wagoid/commitlint-github-action@v4
 
       - name: Cache Dependencies
         uses: actions/cache@v3
@@ -77,3 +82,5 @@ jobs:
           context: ${{ env.PROJ_DIR }}
           tags: ${{ format('{0}:{1}', env.DOCKERHUB_REPO, steps.version.outputs.new-release-version) }}
           push: true
+          cache-from: type=registry,ref=${{ env.DOCKERHUB_REPO }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKERHUB_REPO }}:buildcache,mode=max
