@@ -1,12 +1,23 @@
 ﻿{
   "Routes": [
-
+    {
+      "UpstreamPathTemplate": "/api/auth-service/{everything}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/user/{everything}"
+    },
   ],
   "GlobalConfiguration": {
     "ReguestIdKey": "OcRequestId",
-    "DownstreamScheme": "https",
+    "DownstreamScheme": "http",
     "LoadBalancerOptions": {
-      "Type":  "LeastConnection"
+      "Type": "LeastConnection"
     }
-   }
- }
+  },
+}
