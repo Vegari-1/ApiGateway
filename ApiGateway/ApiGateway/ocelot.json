@@ -1,6 +1,31 @@
 ﻿{
   "Routes": [
     {
+      "UpstreamPathTemplate": "/api/auth-service/test",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/user/test",
+      // Authentication: if token not present, returns 401
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      // Authorization: if claim Role with value ROLE_USER not present, returns 403
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      // Adds header to request to service
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/auth-service/{everything}",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamScheme": "http",
@@ -11,7 +36,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/user/{everything}"
-    },
+    }
   ],
   "GlobalConfiguration": {
     "ReguestIdKey": "OcRequestId",
@@ -19,5 +44,5 @@
     "LoadBalancerOptions": {
       "Type": "LeastConnection"
     }
-  },
+  }
 }
