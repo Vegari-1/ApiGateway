@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.IdentityModel.Tokens;
 using Ocelot.Middleware;
 using OpenTracing;
 using Jaeger.Reporters;
@@ -9,6 +9,7 @@ using OpenTracing.Contrib.NetCore.Configuration;
 using OpenTracing.Util;
 using Prometheus;
 using Ocelot.DependencyInjection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +18,33 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Configuration.AddJsonFile("ocelot.json", false, true);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
+//Add Authentication via JWT Token
+var identityUrl = builder.Configuration.GetValue<string>("IdentityUrl");
+var authenticationProviderKey = "Bearer";
+builder.Services.AddAuthentication()
+    .AddJwtBearer(authenticationProviderKey, x =>
+    {
+        x.Authority = identityUrl;
+        x.RequireHttpsMetadata = false;
+        x.SaveToken = true;
+        x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+        {
+            ValidAudiences = new[] { "vegari-1", },
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new
+            SymmetricSecurityKey
+            (Encoding.UTF8.GetBytes
+            (builder.Configuration["Jwt:Key"])),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -69,6 +95,7 @@ if (builder.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiGateway v1"));
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
