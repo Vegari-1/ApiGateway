@@ -1,31 +1,7 @@
 ﻿{
   "Routes": [
     {
-      "UpstreamPathTemplate": "/api/auth-service/test",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "auth-service",
-          "Port": 80
-        }
-      ],
-      "DownstreamPathTemplate": "/api/user/test",
-      // Authentication: if token not present, returns 401
-      "AuthenticationOptions": {
-        "AuthenticationProviderkey": "Bearer",
-        "AllowedScopes": []
-      },
-      // Authorization: if claim Role with value ROLE_USER not present, returns 403
-      "RouteClaimsRequirement": {
-        "Role": "ROLE_USER"
-      },
-      // Adds header to request to service
-      "AddHeadersToRequest": {
-        "profile-id": "Claims[id] > value"
-      }
-    },
-    {
+      // auth/login and auth/register
       "UpstreamPathTemplate": "/api/auth-service/{everything}",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamScheme": "http",
@@ -36,6 +12,442 @@
         }
       ],
       "DownstreamPathTemplate": "/api/user/{everything}"
+    },
+    {
+      // joboffer create and get all not blocked
+      "UpstreamPathTemplate": "/api/job-offer-service",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "job-offer-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/joboffer",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // search joboffer
+      "UpstreamPathTemplate": "/api/job-offer-service?query={everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "job-offer-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/joboffer?query={everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // get and update notification for profile
+      "UpstreamPathTemplate": "/api/notification-service",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notification-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/notification",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // get posts posted by profile {id} (profile page)
+      "UpstreamPathTemplate": "/api/post-service/profile/{id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "post-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/post/profile/{id}"
+    },
+    {
+      // posts feed for profile
+      "UpstreamPathTemplate": "/api/post-service",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "post-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/post",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // search posts feed
+      "UpstreamPathTemplate": "/api/post-service?query={everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "post-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/post?query={everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // create post comment
+      "UpstreamPathTemplate": "/api/post-service/{id}/comment",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "post-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/post/{id}/comment",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // create post reaction
+      "UpstreamPathTemplate": "/api/post-service/{id}/reaction",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "post-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/post/{id}/reaction",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // get profile by id
+      "UpstreamPathTemplate": "/api/profile-service/profile/{id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/{id}"
+    },
+    {
+      // get profile skill by id
+      "UpstreamPathTemplate": "/api/profile-service/profile/{id}/skill",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/{id}/skill"
+    },
+    {
+      // get profile work-experience by id
+      "UpstreamPathTemplate": "/api/profile-service/profile/{id}/work-experience",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/{id}/work-experience"
+    },
+    {
+      // get profile education by id
+      "UpstreamPathTemplate": "/api/profile-service/profile/{id}/education",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/{id}/education"
+    },
+    {
+      // get public profiles
+      "UpstreamPathTemplate": "/api/profile-service/profile?public=true",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile?public=true"
+    },
+    {
+      // search public profiles
+      "UpstreamPathTemplate": "/api/profile-service/profile?public=true&query={everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile?public=true&query={everything}"
+    },
+    {
+      // get not blocked profiles and create profile
+      "UpstreamPathTemplate": "/api/profile-service/profile",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // search not blocked profiles
+      "UpstreamPathTemplate": "/api/profile-service/profile?query={everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile?query={everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // connect/disconnect with profile
+      "UpstreamPathTemplate": "/api/profile-service/connection",
+      "UpstreamHttpMethod": [ "Post", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/connection",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // block profile
+      "UpstreamPathTemplate": "/api/profile-service/profile/block/{id}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/block/{id}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // get connection requests
+      "UpstreamPathTemplate": "/api/profile-service/conn-req",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/conn-req",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // accept/delete connection requests
+      "UpstreamPathTemplate": "/api/profile-service/conn-req/{id}",
+      "UpstreamHttpMethod": [ "Post", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/conn-req/{id}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // add skill/education/work-experience
+      "UpstreamPathTemplate": "/api/profile-service/{everything}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // delete skill/education/work-experience
+      "UpstreamPathTemplate": "/api/profile-service/{everything}/{id}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/{everything}/{id}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
     }
   ],
   "GlobalConfiguration": {
