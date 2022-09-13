@@ -11,7 +11,20 @@ using Prometheus;
 using Ocelot.DependencyInjection;
 using System.Text;
 
+var allowSpecificOrigins = "_allowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(allowSpecificOrigins,
+                          policy =>
+                          {
+                              policy.WithOrigins("http://localhost:3000")
+                                    .AllowAnyHeader()
+                                    .AllowAnyMethod();
+                          });
+});
 
 builder.Configuration.AddEnvironmentVariables();
 // Add ocelot.json
@@ -95,6 +108,7 @@ if (builder.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiGateway v1"));
 }
 
+app.UseCors(allowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
