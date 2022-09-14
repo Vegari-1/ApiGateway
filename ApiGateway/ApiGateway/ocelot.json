@@ -212,6 +212,16 @@
         }
       ],
       "DownstreamPathTemplate": "/api/profile/api-key",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
     },
     {
       // get profile by id authenticated user
