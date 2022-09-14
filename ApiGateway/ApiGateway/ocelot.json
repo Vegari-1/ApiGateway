@@ -201,6 +201,19 @@
       "DownstreamPathTemplate": "/api/profile/share-job-offer",
     },
     {
+      // generate api key
+      "UpstreamPathTemplate": "/api/profile-service/profile/api-key",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/api-key",
+    },
+    {
       // get profile by id authenticated user
       "UpstreamPathTemplate": "/api/profile-service/profile/auth/{id}",
       "UpstreamHttpMethod": [ "Get" ],
