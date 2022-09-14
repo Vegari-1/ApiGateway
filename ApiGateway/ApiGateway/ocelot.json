@@ -188,6 +188,19 @@
       }
     },
     {
+      // share job offer
+      "UpstreamPathTemplate": "/api/profile-service/profile/share-job-offer",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/share-job-offer",
+    },
+    {
       // get profile by id authenticated user
       "UpstreamPathTemplate": "/api/profile-service/profile/auth/{id}",
       "UpstreamHttpMethod": [ "Get" ],
