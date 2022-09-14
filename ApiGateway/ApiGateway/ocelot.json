@@ -188,6 +188,29 @@
       }
     },
     {
+      // get profile by id authenticated user
+      "UpstreamPathTemplate": "/api/profile-service/profile/auth/{id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "profile-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/profile/auth/{id}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
       // get profile by id
       "UpstreamPathTemplate": "/api/profile-service/profile/{id}",
       "UpstreamHttpMethod": [ "Get" ],
@@ -241,7 +264,7 @@
     },
     {
       // get public profiles
-      "UpstreamPathTemplate": "/api/profile-service/profile?public=true",
+      "UpstreamPathTemplate": "/api/profile-service/profile?isPublic=true",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -250,11 +273,11 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/profile?public=true"
+      "DownstreamPathTemplate": "/api/profile?isPublic=true"
     },
     {
       // search public profiles
-      "UpstreamPathTemplate": "/api/profile-service/profile?public=true&query={everything}",
+      "UpstreamPathTemplate": "/api/profile-service/profile?isPublic=true&query={everything}",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -263,12 +286,12 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/profile?public=true&query={everything}"
+      "DownstreamPathTemplate": "/api/profile?isPublic=true&query={everything}"
     },
     {
-      // get not blocked profiles and create profile
+      // get not blocked profiles and create/update profile
       "UpstreamPathTemplate": "/api/profile-service/profile",
-      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
