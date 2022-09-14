@@ -93,11 +93,6 @@ builder.Services.Configure<HttpHandlerDiagnosticOptions>(options =>
 
 builder.Services.AddOcelot();
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(80);
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
