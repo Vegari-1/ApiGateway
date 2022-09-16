@@ -36,6 +36,8 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/package-lock.json')}} # kljuc pod kojim je kes sacuvan (kreira se novi za svaku promenu dependensija)
           restore-keys: |
             ${{ runner.os }}-nuget-
+      - name: Add GPR
+        run: dotnet nuget add source --username ekipa --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Vegari-1/index.json"
       - name: Install Dependencies
         working-directory: ${{ env.PROJ_DIR }}
         run: dotnet restore
@@ -62,9 +64,7 @@ jobs:
       
       - name: Publish the package to GPR
         if: github.event_name == 'push'
-        run: |
-          dotnet nuget add source --username ekipa --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Vegari-1/index.json"
-          dotnet nuget push ${{ env.PACKAGE_PATH }} --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+        run: dotnet nuget push ${{ env.PACKAGE_PATH }} --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
 
       - name: Set up Docker Buildx
         if: github.event_name == 'push'
@@ -80,7 +80,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ${{ env.PROJ_DIR }}
-          tags: ${{ format('{0}:{1}', env.DOCKERHUB_REPO, steps.version.outputs.new-release-version) }}
+          tags: ${{ env.DOCKERHUB_REPO }}:latest, ${{ env.DOCKERHUB_REPO }}:${{ steps.version.outputs.new-release-version }}
           push: true
           cache-from: type=registry,ref=${{ env.DOCKERHUB_REPO }}:buildcache
           cache-to: type=registry,ref=${{ env.DOCKERHUB_REPO }}:buildcache,mode=max
