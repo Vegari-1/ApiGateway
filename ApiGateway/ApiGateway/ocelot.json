@@ -14,6 +14,29 @@
       "DownstreamPathTemplate": "/api/user/{everything}"
     },
     {
+      // get events
+      "UpstreamPathTemplate": "/api/event-service",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "event-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/event",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_ADMIN"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
       // joboffer create and get all not blocked
       "UpstreamPathTemplate": "/api/job-offer-service",
       "UpstreamHttpMethod": [ "Get", "Post" ],
