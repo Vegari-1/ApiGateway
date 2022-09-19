@@ -105,6 +105,29 @@
         "profile-id": "Claims[id] > value"
       }
     },
+	{
+      // search posts feed
+      "UpstreamPathTemplate": "/api/post-service/search?query={everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "post-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/post/search?query={everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
     {
       // get posts posted by profile {id} (profile page)
       "UpstreamPathTemplate": "/api/post-service/profile/{id}",
@@ -130,29 +153,6 @@
         }
       ],
       "DownstreamPathTemplate": "/api/post",
-      "AuthenticationOptions": {
-        "AuthenticationProviderkey": "Bearer",
-        "AllowedScopes": []
-      },
-      "RouteClaimsRequirement": {
-        "Role": "ROLE_USER"
-      },
-      "AddHeadersToRequest": {
-        "profile-id": "Claims[id] > value"
-      }
-    },
-    {
-      // search posts feed
-      "UpstreamPathTemplate": "/api/post-service?query={everything}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "post-service",
-          "Port": 80
-        }
-      ],
-      "DownstreamPathTemplate": "/api/post?query={everything}",
       "AuthenticationOptions": {
         "AuthenticationProviderkey": "Bearer",
         "AllowedScopes": []
