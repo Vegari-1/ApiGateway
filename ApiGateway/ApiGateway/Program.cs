@@ -10,6 +10,8 @@ using OpenTracing.Util;
 using Prometheus;
 using Ocelot.DependencyInjection;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Primitives;
 
 var allowSpecificOrigins = "_allowSpecificOrigins";
 
@@ -56,6 +58,18 @@ builder.Services.AddAuthentication()
             (Encoding.UTF8.GetBytes
             (builder.Configuration["Jwt:Key"])),
             ClockSkew = TimeSpan.Zero
+        };
+        x.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (string.IsNullOrEmpty(context.Token) && context.Request.Query.TryGetValue("access_token", out StringValues token))
+                {
+                    context.Token = token;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -111,6 +125,9 @@ app.MapControllers();
 
 // Prometheus metrics
 app.UseMetricServer();
+
+// Enable sockets
+app.UseWebSockets();
 
 app.UseOcelot().Wait();
 

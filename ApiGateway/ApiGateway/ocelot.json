@@ -105,7 +105,7 @@
         "profile-id": "Claims[id] > value"
       }
     },
-	{
+    {
       // search posts feed
       "UpstreamPathTemplate": "/api/post-service/search?query={everything}",
       "UpstreamHttpMethod": [ "Get" ],
@@ -140,8 +140,8 @@
         }
       ],
       "DownstreamPathTemplate": "/api/post/profile/{id}",
-	  // potencijalno ce padati (ne znam sta se desi ocelotu kad nema tokena)
-	  "AddHeadersToRequest": {
+      // potencijalno ce padati (ne znam sta se desi ocelotu kad nema tokena)
+      "AddHeadersToRequest": {
         "profile-id": "Claims[id] > value"
       }
     },
@@ -225,7 +225,7 @@
           "Port": 5003
         }
       ],
-      "DownstreamPathTemplate": "/api/profile/share-job-offer",
+      "DownstreamPathTemplate": "/api/profile/share-job-offer"
     },
     {
       // generate api key
@@ -533,6 +533,49 @@
       },
       "AddHeadersToRequest": {
         "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // Converstions get all not blocked
+      "UpstreamPathTemplate": "/api/message-service",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "message-service",
+          "Port": 5002
+        }
+      ],
+      "DownstreamPathTemplate": "/api/conversation",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // Messaging
+      "UpstreamPathTemplate": "/api/message-service/{catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "message-service",
+          "Port": 5002
+        }
+      ],
+      "DownstreamPathTemplate": "/{catchAll}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
       }
     }
   ],
