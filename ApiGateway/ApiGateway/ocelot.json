@@ -530,6 +530,49 @@
       "AddHeadersToRequest": {
         "profile-id": "Claims[id] > value"
       }
+    },
+    {
+      // Converstions get all not blocked
+      "UpstreamPathTemplate": "/api/message-service",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "message-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/conversation",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
+      "AddHeadersToRequest": {
+        "profile-id": "Claims[id] > value"
+      }
+    },
+    {
+      // Messaging
+      "UpstreamPathTemplate": "/api/message-service/{catchAll}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "message-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/{catchAll}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      }
     }
   ],
   "GlobalConfiguration": {
