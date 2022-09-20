@@ -140,7 +140,13 @@
         }
       ],
       "DownstreamPathTemplate": "/api/post/profile/{id}",
-      // potencijalno ce padati (ne znam sta se desi ocelotu kad nema tokena)
+	  "AuthenticationOptions": {
+        "AuthenticationProviderkey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "ROLE_USER"
+      },
       "AddHeadersToRequest": {
         "profile-id": "Claims[id] > value"
       }
